@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天の架け橋777 — by Fuku.FPK</title>
+<style>
+:root {
+  --bg-deep: #0a0d12;
+  --bg-panel: #11151c;
+  --gold: #c9a876;
+  --gold-soft: #a8916b;
+  --teal: #3d5a6c;
+  --teal-glow: #5b8a9e;
+  --text-main: #e8e4dc;
+  --text-dim: #9a9690;
+  --line: rgba(201, 168, 118, 0.18);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-main);
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  line-height: 1.85;
+  overflow-x: hidden;
+}
+
+.sans {
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+
+#stars-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8vh 6vw 6vh;
+  position: relative;
+}
+
+.hero-eyebrow {
+  letter-spacing: 0.45em;
+  font-size: 0.7rem;
+  color: var(--gold-soft);
+  margin-bottom: 2.2rem;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-size: clamp(2.6rem, 11vw, 5.2rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  color: var(--text-main);
+  text-shadow: 0 0 40px rgba(201,168,118,0.15);
+}
+
+.hero-title .seven {
+  color: var(--gold);
+}
+
+.hero-subtitle {
+  margin-top: 1.6rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.hero-by {
+  margin-top: 2.6rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+  color: var(--teal-glow);
+  font-style: italic;
+}
+
+.hero-divider {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--gold-soft), transparent);
+  margin: 3rem auto;
+}
+
+.hero-tagline {
+  max-width: 460px;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 5vh;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--gold-soft);
+  opacity: 0.7;
+  animation: pulse-fade 2.6s ease-in-out infinite;
+}
+
+@keyframes pulse-fade {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 0.8; transform: translateY(6px); }
+}
+
+/* ===== SECTION SHARED ===== */
+.section {
+  padding: 9vh 6vw;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.section-label {
+  letter-spacing: 0.35em;
+  font-size: 0.68rem;
+  color: var(--gold-soft);
+  text-transform: uppercase;
+  margin-bottom: 1.4rem;
+}
+
+.section-title {
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin-bottom: 2.4rem;
+  color: var(--text-main);
+}
+
+.hairline {
+  height: 1px;
+  background: var(--line);
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ===== STATEMENT ===== */
+.statement-text {
+  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+  color: var(--text-main);
+  line-height: 2.1;
+  letter-spacing: 0.02em;
+}
+
+.statement-text .accent {
+  color: var(--gold);
+}
+
+.lucky-seven {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 3rem 0;
+}
+
+.lucky-seven span {
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  font-weight: 300;
+  color: var(--gold);
+  opacity: 0.85;
+}
+
+/* ===== ARTWORKS GALLERY ===== */
+.gallery-intro {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  margin-bottom: 3.5rem;
+  max-width: 640px;
+}
+
+.artwork-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.artwork-card {
+  border-top: 1px solid var(--line);
+  padding: 2.6rem 0;
+  cursor: pointer;
+}
+
+.artwork-card:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.artwork-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
+.artwork-title {
+  font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+  color: var(--text-main);
+  letter-spacing: 0.03em;
+  flex: 1;
+}
+
+.artwork-toggle {
+  font-size: 0.85rem;
+  color: var(--gold-soft);
+  white-space: nowrap;
+  transition: transform 0.35s ease;
+  flex-shrink: 0;
+}
+
+.artwork-card.open .artwork-toggle {
+  transform: rotate(180deg);
+}
+
+.artwork-body {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.4s ease, margin-top 0.5s ease;
+  margin-top: 0;
+}
+
+.artwork-card.open .artwork-body {
+  max-height: 2000px;
+  opacity: 1;
+  margin-top: 1.8rem;
+}
+
+.artwork-body-inner {
+  display: flex;
+  gap: 2.2rem;
+  flex-wrap: wrap;
+}
+
+.artwork-img-wrap {
+  flex: 0 0 220px;
+  max-width: 220px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--bg-panel);
+}
+
+.artwork-img-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.artwork-desc {
+  flex: 1;
+  min-width: 220px;
+  font-size: 0.92rem;
+  color: var(--text-dim);
+  line-height: 1.9;
+  padding-top: 0.2rem;
+}
+
+.artwork-desc .series-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--teal-glow);
+  border: 1px solid var(--teal);
+  padding: 0.25rem 0.7rem;
+  margin-bottom: 0.9rem;
+  text-transform: uppercase;
+}
+
+/* ===== TONG GRID ===== */
+.tong-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1.4rem;
+  margin-top: 1rem;
+}
+
+.tong-item { text-align: center; }
+
+.tong-item .tong-img {
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--bg-panel);
+  margin-bottom: 0.8rem;
+}
+
+.tong-item .tong-img img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.tong-item .tong-name {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+
+/* ===== INFO BLOCKS ===== */
+.info-block { margin-bottom: 3.5rem; }
+.info-block:last-child { margin-bottom: 0; }
+
+.info-block-title {
+  font-size: 1.05rem;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  margin-bottom: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.info-block-title::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  background: var(--gold);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.info-block-body {
+  font-size: 0.92rem;
+  color: var(--text-dim);
+  line-height: 1.95;
+}
+
+.info-block-body p { margin-bottom: 0.9rem; }
+
+.info-block-body a {
+  color: var(--teal-glow);
+  text-decoration: none;
+  border-bottom: 1px solid var(--teal);
+}
+
+.info-photo {
+  margin-top: 1.4rem;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--bg-panel);
+  max-width: 320px;
+}
+
+.info-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.info-photo-caption {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+  margin-top: 0.6rem;
+}
+
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.detail-table tr { border-bottom: 1px solid var(--line); }
+.detail-table tr:last-child { border-bottom: none; }
+
+.detail-table th {
+  text-align: left;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--gold-soft);
+  font-weight: 400;
+  padding: 0.85rem 0;
+  width: 30%;
+  vertical-align: top;
+}
+
+.detail-table td {
+  font-size: 0.92rem;
+  color: var(--text-main);
+  padding: 0.85rem 0;
+}
+
+.sns-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.sns-link {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  text-decoration: none;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid var(--line);
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.sns-link:hover {
+  border-color: var(--gold-soft);
+  background: rgba(201,168,118,0.04);
+}
+
+.sns-link .sns-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--gold-soft);
+  text-transform: uppercase;
+  width: 76px;
+  flex-shrink: 0;
+}
+
+/* ===== Tap-to-reveal photo block ===== */
+.photo-reveal {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 1.4rem 0;
+  cursor: pointer;
+  margin: 1.4rem 0;
+}
+
+.photo-reveal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
+.photo-reveal-label {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  letter-spacing: 0.03em;
+}
+
+.photo-reveal-toggle {
+  font-size: 0.85rem;
+  color: var(--gold-soft);
+  white-space: nowrap;
+  transition: transform 0.35s ease;
+  flex-shrink: 0;
+}
+
+.photo-reveal.open .photo-reveal-toggle {
+  transform: rotate(180deg);
+}
+
+.photo-reveal-body {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.4s ease, margin-top 0.5s ease;
+  margin-top: 0;
+}
+
+.photo-reveal.open .photo-reveal-body {
+  max-height: 2000px;
+  opacity: 1;
+  margin-top: 1.4rem;
+}
+
+.photo-reveal-body .info-photo {
+  max-width: 320px;
+  margin-bottom: 0;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  text-align: center;
+  padding: 7vh 6vw 9vh;
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.footer .signature {
+  font-size: 1.4rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 600px) {
+  .section { padding: 7vh 7vw; }
+  .artwork-body-inner { flex-direction: column; }
+  .artwork-img-wrap { flex: 0 0 auto; max-width: 100%; }
+  .detail-table th { width: 38%; }
+}
+
+:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+
+<div class="page-content">
+
+  <section class="hero">
+    <div class="hero-eyebrow sans">SOLO EXHIBITION</div>
+    <h1 class="hero-title">天の架け橋<span class="seven">777</span></h1>
+    <div class="hero-subtitle sans">あまのかけはし スリーセブン</div>
+    <div class="hero-by">by Fuku.FPK</div>
+    <div class="hero-divider"></div>
+    <p class="hero-tagline sans">2026.7.7 – 7.12　愛知県豊田市　珈琲香房【楽風】</p>
+    <div class="scroll-hint sans">SCROLL ▾</div>
+  </section>
+
+  <section class="section" id="statement">
+    <div class="section-label sans">STATEMENT</div>
+    <h2 class="section-title">個展に対する思い</h2>
+    <div class="hairline" style="margin-bottom: 2.6rem;"></div>
+    <p class="statement-text">
+      今回で<span class="accent">7回目</span>を迎える個展は、七夕の日、<span class="accent">7月7日</span>に開催します。<br><br>
+      幸運の数字「7」を意識しながら、ここに集う人と人、そして作品との間に、<span class="accent">新しい縁</span>が生まれることを願っています。
+    </p>
+    <div class="lucky-seven sans"><span>7</span><span>7</span><span>7</span></div>
+  </section>
+
+  <div class="hairline" style="max-width: 980px; margin: 0 auto;"></div>
+
+  <section class="section" id="works">
+    <div class="section-label sans">EXHIBITED WORKS</div>
+    <h2 class="section-title">展示作品</h2>
+    <p class="gallery-intro sans">タイトルをタップすると、作品の写真が開きます。</p>
+    <div class="artwork-list" id="artwork-list"></div>
+  </section>
+
+  <div class="hairline" style="max-width: 980px; margin: 0 auto;"></div>
+
+  <section class="section" id="tongs">
+    <div class="section-label sans">SMALL PIECES</div>
+    <h2 class="section-title">トングシリーズ</h2>
+    <p class="gallery-intro sans">小さなキャンバスに描かれた5つの掌編。</p>
+
+    <div class="photo-reveal sans" id="tong-overview-reveal">
+      <div class="photo-reveal-head">
+        <div class="photo-reveal-label">トングシリーズ全体</div>
+        <div class="photo-reveal-toggle">▾</div>
+      </div>
+      <div class="photo-reveal-body">
+        <div class="info-photo">
+          <img loading="lazy" alt="トングシリーズ全体" src="images/18_tong_set2.jpg">
+        </div>
+      </div>
+    </div>
+
+    <p class="gallery-intro sans" style="margin-bottom: 2.4rem;">左から「トン苦」、「春を迎える二人組」、「トング蒼海月」、「トング12/24」「やる気の電流」です。</p>
+    <div class="tong-grid" id="tong-grid"></div>
+  </section>
+
+  <div class="hairline" style="max-width: 980px; margin: 0 auto;"></div>
+
+  <section class="section" id="visit">
+    <div class="section-label sans">VISIT</div>
+    <h2 class="section-title">会場について</h2>
+
+    <div class="info-block">
+      <div class="info-block-title sans">在廊日</div>
+      <div class="info-block-body sans">
+        <p>会期中、作家本人が在廊するのは <strong style="color:var(--text-main)">7/11（土）・7/12（日）</strong> のみです。在廊日には作家と直接お話しいただけ、作品についての説明も承ります。</p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title sans">支払い方法</div>
+      <div class="info-block-body sans">
+        <p>7/7〜7/10は作家が不在のため、お買い求めの際は店員にお伝えください。</p>
+        <p>原画・グッズのご購入時は、店舗にある購入履歴表へのご記入をお願いしております（原画の場合は、お名前に加え住所・郵便番号・電話番号もご記入ください）。原画は会期終了後、郵送でのお届けとなります。</p>
+        <p>お支払いは<strong style="color:var(--text-main)">現金のみ</strong>のご対応となります。</p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title sans">日程・会場</div>
+      <table class="detail-table sans">
+        <tr><th>会期</th><td>2026年7月7日（火）〜7月12日（日）</td></tr>
+        <tr><th>時間</th><td>9:00〜18:00（最終日は17:00まで）</td></tr>
+        <tr><th>会場</th><td>珈琲香房【楽風】<br>愛知県豊田市喜多町2-16-0　コモスクエア1階<br>電話番号　0565-32-0233</td></tr>
+      </table>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title sans">駐車場について</div>
+      <div class="info-block-body sans">
+        <p><strong style="color:var(--text-main)">① 楽風の駐車場</strong><br>
+        カフェ前のクリーニング店の先にある駐車場（青い「楽風」の看板）のうち、②③④⑤の4スペースが個展利用可能です。ただし1つは作家が使用するため、実質<strong style="color:var(--text-main)">3スペース</strong>が来場者用となります。</p>
+
+        <div class="photo-reveal" id="parking-reveal">
+          <div class="photo-reveal-head">
+            <div class="photo-reveal-label">楽風駐車場の看板と入口</div>
+            <div class="photo-reveal-toggle">▾</div>
+          </div>
+          <div class="photo-reveal-body">
+            <div class="info-photo">
+              <img loading="lazy" alt="楽風駐車場の看板と入口" src="images/parking.jpg">
+            </div>
+            <div class="info-photo-caption">楽風の駐車場入口（青い看板が目印）</div>
+          </div>
+        </div>
+
+        <p style="margin-top: 1.6rem;"><strong style="color:var(--text-main)">② コモパーキング（隣接）</strong><br>
+        豊田市のフリーパーキング制度を利用し、施設内での認証（スタンプ等）を受けることで<strong style="color:var(--text-main)">3時間無料</strong>でご利用いただけます。詳細は<a href="https://share.google/pcAzI3FTQAl5XAYTf" target="_blank" rel="noopener">こちら</a>。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="hairline" style="max-width: 980px; margin: 0 auto;"></div>
+
+  <section class="section" id="links">
+    <div class="section-label sans">MORE FROM FUKU.FPK</div>
+    <h2 class="section-title">作品を、もっと見る</h2>
+    <div class="sns-links sans">
+      <a class="sns-link" href="https://www.instagram.com/fuku.fpk?igsh=d3EzNXNwcXF4aHV1" target="_blank" rel="noopener">
+        <span class="sns-label">Instagram</span>
+        <span>@fuku.fpk</span>
+      </a>
+      <a class="sns-link" href="https://youtube.com/@fuku.fpk10?si=rRbyVNDGRwHMT612" target="_blank" rel="noopener">
+        <span class="sns-label">YouTube</span>
+        <span>@fukuFPK</span>
+      </a>
+      <a class="sns-link" href="https://fukufpk.base.shop/" target="_blank" rel="noopener">
+        <span class="sns-label">Shop</span>
+        <span>BASE — オンラインストア</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="signature">Fuku.FPK</div>
+    <div class="sans">天の架け橋777　2026.7.7–7.12</div>
+  </footer>
+
+</div>
+
+<script>
+// ===================== Starfield background =====================
+(function() {
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  let w, h;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const starCount = Math.min(140, Math.floor((window.innerWidth * window.innerHeight) / 9000));
+  for (let i = 0; i < starCount; i++) {
+    stars.push({
+      x: Math.random(),
+      y: Math.random(),
+      r: Math.random() * 1.2 + 0.2,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.4 + Math.random() * 0.6,
+    });
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let t = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    for (const s of stars) {
+      const tw = reduceMotion ? 1 : (0.5 + 0.5 * Math.sin(t * 0.001 * s.speed + s.phase));
+      ctx.beginPath();
+      ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(232, 228, 220, ${0.15 + tw * 0.55})`;
+      ctx.fill();
+    }
+    t += 16;
+    if (!reduceMotion) requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===================== Artwork data =====================
+const artworks = [
+  { title: "青と夏（ラムネとハナビ）", img: "images/13_aotonatsu.jpg", desc: "空に浮かぶラムネの瓶。割れたガラスの先に夏の光が爆ぜる。" },
+  { title: "待ってほしい", img: "images/11_matteta.jpg", desc: "割れたサングラスのレンズの中に、二人の白い人影が浮かぶ。" },
+  { title: "希望の発火", img: "images/08_kibo.jpg", desc: "紺と紫が溶け合う暗闇の中、黄色い人影が前へ進む。右下には小さな泡がいくつも浮かぶ。" },
+  { title: "ダークヒーロー", img: "images/09_dark_hero.jpg", desc: "オーロラと紫の夜空の下、満月を背にマントをなびかせる人影。" },
+  { title: "夢源郷（ユートピア）　第一章", sub: "「また一緒に、この景色見たいね」", img: "images/12_yume_genkyo1.jpg", desc: "画面いっぱいに広がる天の川。右上にオレンジ色のサイン。", series: "夢源郷シリーズ 1/3" },
+  { title: "夢源郷（ユートピア）　第二章", sub: "「もう一生、一緒には見れないか」", img: "images/14_yume_genkyo2.jpg", desc: "全体が暗く沈み、荒々しい波が画面を覆う。", series: "夢源郷シリーズ 2/3" },
+  { title: "夢源郷（ユートピア）　第三章", sub: "「そうだな、また一緒に見たいって言ってたな」", img: "images/04_yume_genkyo3.jpg", desc: "明るい夜空に浮かぶ月と空島。海へ落ちる棒人間に、ピンクの人影が手を差し伸べる。", series: "夢源郷シリーズ 3/3" },
+  { title: "何度でも生まれ変わる", img: "images/10_nandodemo.jpg", desc: "黄色くひび割れた中心から、紫・緑・青の銀河が四方に広がっていく。" },
+  { title: "持ち続けた石", img: "images/02_matte_hoshii.jpg", desc: "雪景色の中、フードを被った少年の胸元だけが静かに光る。" },
+  { title: "正義感の強い少年", img: "images/05_seigikan.jpg", desc: "淡い色の抽象画の上に、厚みのあるメディウムを重ねて夜空を描いた一枚。" },
+  { title: "終わるまでの無限の海", img: "images/15_owarumade.jpg", desc: "漂流するごみの間で、人がイルカを抱きしめている。「海の日」をテーマにした作品。" },
+  { title: "殻を破った先の超新星", img: "images/07_seigikan2.jpg", desc: "黄色いひび割れた物体から、紫・緑・青の宇宙が一気に広がっていく。" },
+  { title: "待ち合わせ場所", img: "images/16_machiawase.jpg", desc: "紅葉した公園で、時計の下にたたずむカップル。" },
+  { title: "晴れのとき", img: "images/03_hareno_toki.jpg", desc: "草むらの中、黄色い人影が眩しい日差しを受け止める。サインは右上にオレンジで。" },
+  { title: "華灯", img: "images/06_hanado.jpg", desc: "縦長の画面、静かな水面の上に花火の光が反射する。" },
+];
+
+const artworkList = document.getElementById('artwork-list');
+
+artworks.forEach((art) => {
+  const card = document.createElement('div');
+  card.className = 'artwork-card';
+
+  const head = document.createElement('div');
+  head.className = 'artwork-head';
+
+  const titleWrap = document.createElement('div');
+  titleWrap.className = 'artwork-title';
+  titleWrap.innerHTML = art.title + (art.sub ? `<br><span style="font-size:0.72em; color:var(--text-dim); letter-spacing:0.02em;">${art.sub}</span>` : '');
+
+  const toggle = document.createElement('div');
+  toggle.className = 'artwork-toggle sans';
+  toggle.textContent = '▾';
+
+  head.appendChild(titleWrap);
+  head.appendChild(toggle);
+
+  const body = document.createElement('div');
+  body.className = 'artwork-body';
+
+  const bodyInner = document.createElement('div');
+  bodyInner.className = 'artwork-body-inner';
+
+  const imgWrap = document.createElement('div');
+  imgWrap.className = 'artwork-img-wrap';
+  const imgEl = document.createElement('img');
+  imgEl.loading = 'lazy';
+  imgEl.alt = art.title;
+  imgWrap.appendChild(imgEl);
+
+  const descEl = document.createElement('div');
+  descEl.className = 'artwork-desc sans';
+  descEl.innerHTML = (art.series ? `<span class="series-tag">${art.series}</span><br>` : '') + art.desc;
+
+  bodyInner.appendChild(imgWrap);
+  bodyInner.appendChild(descEl);
+  body.appendChild(bodyInner);
+
+  card.appendChild(head);
+  card.appendChild(body);
+
+  head.addEventListener('click', () => {
+    const isOpen = card.classList.contains('open');
+    if (!isOpen && imgEl.dataset.loaded !== 'true') {
+      imgEl.src = art.img;
+      imgEl.dataset.loaded = 'true';
+    }
+    card.classList.toggle('open');
+  });
+
+  artworkList.appendChild(card);
+});
+
+// ===================== Tong grid =====================
+const tongs = [
+  { name: "トン苦", img: "images/tong_1.jpg" },
+  { name: "春を迎える二人組", img: "images/tong_2.jpg" },
+  { name: "トング蒼海月", img: "images/tong_3.jpg" },
+  { name: "トング12/24", img: "images/tong_4.jpg" },
+  { name: "やる気の電流", img: "images/tong_5.jpg" },
+];
+
+const tongGrid = document.getElementById('tong-grid');
+tongs.forEach(t => {
+  const item = document.createElement('div');
+  item.className = 'tong-item';
+  item.innerHTML = `
+    <div class="tong-img"><img loading="lazy" alt="${t.name}" src="${t.img}"></div>
+    <div class="tong-name sans">${t.name}</div>
+  `;
+  tongGrid.appendChild(item);
+});
+
+// ===================== Photo reveal blocks (parking) =====================
+function setupPhotoReveal(revealId) {
+  const reveal = document.getElementById(revealId);
+  const head = reveal.querySelector('.photo-reveal-head');
+  head.addEventListener('click', () => {
+    reveal.classList.toggle('open');
+  });
+}
+
+setupPhotoReveal('tong-overview-reveal');
+setupPhotoReveal('parking-reveal');
+</script>
+
+</body>
+</html>
